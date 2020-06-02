@@ -25,14 +25,24 @@ var client = dgram.createSocket("udp4");
 http
   .createServer(function (request, response) {
     var pathname = url.parse(request.url).pathname;
-
     var url_params = request.url.split("/");
-
     if (url_params.length < 2) return;
 
-    var command = url_params[1];
+    const [
+      cmd_name,
+      p1,
+      p2,
+      p3,
+      p4,
+      p5,
+      p6,
+      p7,
+      p8,
+      p9,
+      p10,
+    ] = url_params.slice(1);
 
-    switch (command) {
+    switch (cmd_name) {
       case "poll":
         respondToPoll(response);
         break;
@@ -120,11 +130,11 @@ http
         break;
 
       case "go":
-        const [empty, cmd, x = 0, y = 0, z = 0] = url_params;
+        // go x y z
+        const cmd_go = [cmd_name, p1 || 0, p2 || 0, p3 || 0].join(" ");
+        console.log(cmd_go);
 
-        const command = [cmd, x, y, z].join(" ");
-
-        var message = new Buffer(command);
+        var message = new Buffer(cmd_go);
         client.send(message, 0, message.length, PORT, HOST, function (
           err,
           bytes
@@ -133,31 +143,28 @@ http
         });
         break;
 
-      // case "curve":
-      //   const [
-      //     undefined,
-      //     cmd,
-      //     x1 = 20,
-      //     y1 = 20,
-      //     z1 = 20,
-      //     x2 = 20,
-      //     y2 = 20,
-      //     z2 = 20,
-      //     speed = 10,
-      //   ] = url_params;
+      case "curve":
+        // curve x1 y1 z1 x2 y2 z2 speed
+        const cmd_curve = [
+          cmd_name,
+          p1 || 20,
+          p2 || 20,
+          p3 || 20,
+          p4 || 20,
+          p5 || 20,
+          p6 || 20,
+          p7 || 10,
+        ].join(" ");
+        console.log(cmd_curve);
 
-      //   const command = [cmd, x1, y1, z1, x2, y2, z2, speed].join(" ");
-      //   console.log(url_params, command);
-      //   var message = new Buffer(command);
-      //   client.send(message, 0, message.length, PORT, HOST, function (
-      //     err,
-      //     bytes
-      //   ) {
-      //     if (err) throw err;
-      //   });
-      //   break;
-
-      // curve x1 y1 z1 x2 y2 z2 speed
+        var message = new Buffer(cmd_curve);
+        client.send(message, 0, message.length, PORT, HOST, function (
+          err,
+          bytes
+        ) {
+          if (err) throw err;
+        });
+        break;
 
       // case camera on/off!
 
