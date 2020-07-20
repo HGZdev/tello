@@ -1,4 +1,6 @@
-# tello
+# DJI Ryze Tello 🛸
+
+**My little drone playground**
 
 - open Scratch 2 offline
 - press Shift and open file/experimental HTML
